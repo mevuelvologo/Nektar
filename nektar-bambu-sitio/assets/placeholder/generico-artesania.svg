@@ -1,0 +1,14 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Artesanía de bambú">
+  <g>
+    <path d="M60 150 Q60 90 120 90 Q180 90 180 150 Z" fill="#B78E4E"/>
+    <g stroke="#4A5A34" stroke-width="2" opacity="0.5" fill="none">
+      <path d="M70 150 Q70 100 120 98"/>
+      <path d="M95 150 Q92 105 120 100"/>
+      <path d="M120 150 L120 100"/>
+      <path d="M145 150 Q148 105 120 100"/>
+      <path d="M170 150 Q170 100 120 98"/>
+    </g>
+    <ellipse cx="120" cy="150" rx="60" ry="10" fill="#8C9B5E"/>
+  </g>
+  <text x="120" y="205" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#4A5A34" opacity="0.65">foto pendiente</text>
+</svg>

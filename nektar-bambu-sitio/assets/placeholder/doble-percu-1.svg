@@ -1,0 +1,26 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doble Percu de bambú">
+  <g transform="rotate(-6 120 120)">
+    <rect x="35" y="95" width="170" height="26" rx="13" fill="#C9A667"/>
+    <rect x="35" y="128" width="170" height="26" rx="13" fill="#B78E4E"/>
+    <g stroke="#4A5A34" stroke-width="2.5" opacity="0.5">
+      <line x1="55" y1="98" x2="55" y2="118"/>
+      <line x1="75" y1="98" x2="75" y2="118"/>
+      <line x1="95" y1="98" x2="95" y2="118"/>
+      <line x1="115" y1="98" x2="115" y2="118"/>
+      <line x1="135" y1="98" x2="135" y2="118"/>
+      <line x1="155" y1="98" x2="155" y2="118"/>
+      <line x1="175" y1="98" x2="175" y2="118"/>
+      <line x1="55" y1="131" x2="55" y2="151"/>
+      <line x1="75" y1="131" x2="75" y2="151"/>
+      <line x1="95" y1="131" x2="95" y2="151"/>
+      <line x1="115" y1="131" x2="115" y2="151"/>
+      <line x1="135" y1="131" x2="135" y2="151"/>
+      <line x1="155" y1="131" x2="155" y2="151"/>
+      <line x1="175" y1="131" x2="175" y2="151"/>
+    </g>
+    <ellipse cx="35" cy="108" rx="8" ry="14" fill="#8C9B5E"/>
+    <ellipse cx="205" cy="108" rx="8" ry="14" fill="#8C9B5E"/>
+    <ellipse cx="35" cy="141" rx="8" ry="14" fill="#8C9B5E"/>
+    <ellipse cx="205" cy="141" rx="8" ry="14" fill="#8C9B5E"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Güiro de bambú">
+  <defs>
+    <linearGradient id="guiroBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D8B77E"/>
+      <stop offset="1" stop-color="#B78E4E"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-8 120 120)">
+    <rect x="45" y="90" width="150" height="60" rx="28" fill="url(#guiroBody)"/>
+    <g stroke="#4A5A34" stroke-width="3" opacity="0.55">
+      <line x1="55" y1="94" x2="55" y2="146"/>
+      <line x1="68" y1="92" x2="68" y2="148"/>
+      <line x1="81" y1="92" x2="81" y2="148"/>
+      <line x1="94" y1="92" x2="94" y2="148"/>
+      <line x1="107" y1="92" x2="107" y2="148"/>
+      <line x1="120" y1="92" x2="120" y2="148"/>
+      <line x1="133" y1="92" x2="133" y2="148"/>
+      <line x1="146" y1="92" x2="146" y2="148"/>
+      <line x1="159" y1="92" x2="159" y2="148"/>
+      <line x1="172" y1="92" x2="172" y2="148"/>
+      <line x1="185" y1="94" x2="185" y2="146"/>
+    </g>
+    <ellipse cx="45" cy="120" rx="9" ry="30" fill="#8C9B5E"/>
+    <ellipse cx="195" cy="120" rx="9" ry="30" fill="#8C9B5E"/>
+  </g>
+</svg>

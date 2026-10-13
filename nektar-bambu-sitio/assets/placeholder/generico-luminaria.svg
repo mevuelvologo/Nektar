@@ -1,0 +1,15 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Luminaria de bambú">
+  <g>
+    <path d="M90 70 L150 70 L165 130 L75 130 Z" fill="#F0E6C8" opacity="0.9"/>
+    <g stroke="#4A5A34" stroke-width="2" opacity="0.5">
+      <line x1="95" y1="70" x2="82" y2="130"/>
+      <line x1="110" y1="70" x2="102" y2="130"/>
+      <line x1="130" y1="70" x2="138" y2="130"/>
+      <line x1="145" y1="70" x2="158" y2="130"/>
+    </g>
+    <rect x="112" y="130" width="16" height="34" fill="#8C9B5E"/>
+    <ellipse cx="120" cy="168" rx="26" ry="7" fill="#4A5A34"/>
+    <circle cx="120" cy="95" r="10" fill="#FFE9A8" opacity="0.85"/>
+  </g>
+  <text x="120" y="205" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#4A5A34" opacity="0.65">foto pendiente</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ovni Drum melódico">
+  <defs>
+    <radialGradient id="ovniBody" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#5A6B45"/>
+      <stop offset="1" stop-color="#2C2A1F"/>
+    </radialGradient>
+  </defs>
+  <circle cx="120" cy="120" r="72" fill="url(#ovniBody)"/>
+  <g fill="none" stroke="#8C9B5E" stroke-width="2" opacity="0.7">
+    <ellipse cx="120" cy="120" rx="46" ry="20"/>
+    <ellipse cx="95" cy="100" rx="8" ry="14"/>
+    <ellipse cx="145" cy="100" rx="8" ry="14"/>
+    <ellipse cx="95" cy="140" rx="8" ry="14"/>
+    <ellipse cx="145" cy="140" rx="8" ry="14"/>
+  </g>
+  <circle cx="120" cy="120" r="10" fill="#C9A667"/>
+</svg>
