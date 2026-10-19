@@ -47,6 +47,14 @@ const PLACEHOLDER = {
 // placeholder genérico de su categoría, así el sitio nunca queda con imágenes rotas.
 const CON_FOTO = ["didgeridoo-liso", "tambor-trueno-mediano", "tambor-oceanico-mediano", "ovni-drum-mini", "bongo-bambu-2-tonos", "guiro-mediano", "baquetas-chicas", "mate-liso-bombilla", "palo-lluvia", "flautone", "kass-kash-asalato", "baquetas-grandes", "ektar", "doble-percu", "fanal", "luminaria", "matofono", "pucuy", "didgeridoo-pirograbado", "didgeridoo-tallado", "tambor-trueno-chico", "tambor-trueno-grande", "tambor-oceanico-chico", "tambor-oceanico-grande", "ovni-drum-chico", "ovni-drum-clasico", "ovni-drum-grande", "bongo-bambu-3-tonos", "bongo-bambu-lineas", "guiro-chico", "guiro-grande", "palo-lluvia-grande", "mate-pirograbado-bombilla", "mate-tallado-bombilla", "fungiball", "cascabelero", "shaker", "caxixi", "luminaria-chica", "luminaria-grande", "pajarito", "llamador-angeles", "llamador-angeles-chico"];
 
+// cuántas fotos secundarias tiene cada producto en assets/productos/galeria/<id>-1.webp, <id>-2.webp, ...
+// (la galería de la ficha muestra primero la foto principal y después estas)
+const GALERIA_EXTRA = {"baquetas-chicas": 3, "baquetas-grandes": 3, "bongo-bambu-2-tonos": 3, "bongo-bambu-3-tonos": 3, "bongo-bambu-lineas": 1, "cascabelero": 4, "caxixi": 3, "didgeridoo-liso": 4, "didgeridoo-pirograbado": 6, "didgeridoo-tallado": 5, "doble-percu": 2, "ektar": 3, "fanal": 2, "flautone": 2, "fungiball": 2, "guiro-chico": 1, "guiro-grande": 1, "guiro-mediano": 1, "kass-kash-asalato": 3, "llamador-angeles": 2, "llamador-angeles-chico": 1, "luminaria": 3, "luminaria-chica": 3, "luminaria-grande": 3, "mate-liso-bombilla": 1, "mate-pirograbado-bombilla": 2, "mate-tallado-bombilla": 6, "matofono": 2, "ovni-drum-chico": 8, "ovni-drum-clasico": 13, "ovni-drum-grande": 4, "ovni-drum-mini": 10, "pajarito": 2, "palo-lluvia": 2, "palo-lluvia-grande": 2, "pucuy": 1, "shaker": 4, "tambor-oceanico-chico": 4, "tambor-oceanico-grande": 4, "tambor-oceanico-mediano": 4, "tambor-trueno-chico": 1, "tambor-trueno-grande": 1, "tambor-trueno-mediano": 1};
+
+// audio corto de cada producto (id -> archivo en assets/audio/). Las variantes que comparten
+// el mismo sonido (chico/mediano/grande) apuntan al mismo archivo.
+const AUDIO_DE = {"bongo-bambu-2-tonos": "assets/audio/bongo-bambu-2-tonos.m4a", "bongo-bambu-3-tonos": "assets/audio/bongo-bambu-3-tonos.m4a", "bongo-bambu-lineas": "assets/audio/bongo-bambu-lineas.m4a", "cascabelero": "assets/audio/cascabelero.m4a", "caxixi": "assets/audio/caxixi.m4a", "didgeridoo-liso": "assets/audio/didgeridoo-liso.m4a", "didgeridoo-pirograbado": "assets/audio/didgeridoo-pirograbado.m4a", "didgeridoo-tallado": "assets/audio/didgeridoo-pirograbado.m4a", "doble-percu": "assets/audio/doble-percu.m4a", "ektar": "assets/audio/ektar.m4a", "flautone": "assets/audio/flautone.m4a", "guiro-chico": "assets/audio/guiro-mediano.m4a", "guiro-grande": "assets/audio/guiro-mediano.m4a", "guiro-mediano": "assets/audio/guiro-mediano.m4a", "llamador-angeles": "assets/audio/llamador-angeles.m4a", "llamador-angeles-chico": "assets/audio/llamador-angeles.m4a", "pucuy": "assets/audio/pucuy.m4a", "shaker": "assets/audio/shaker.m4a", "tambor-oceanico-chico": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-oceanico-grande": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-oceanico-mediano": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-trueno-chico": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-grande": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-mediano": "assets/audio/tambor-trueno-mediano.m4a"};
+
 function item(o) {
   const base = Object.assign({
     subtitulo: "",
@@ -60,7 +68,11 @@ function item(o) {
   const placeholder = PLACEHOLDER[base.categoria === "instrumentos" ? "instrumento" : base.categoria === "luminarias" ? "luminaria" : "artesania"];
   const tieneFoto = CON_FOTO.includes(base.id);
   base.imagen = base.imagen || (tieneFoto ? `assets/productos/thumb/${base.id}.webp` : placeholder);
-  base.galeria = base.galeria || [tieneFoto ? `assets/productos/${base.id}.webp` : placeholder];
+  base.audio = base.audio || AUDIO_DE[base.id] || null;
+  const extras = tieneFoto ? (GALERIA_EXTRA[base.id] || 0) : 0;
+  base.galeria = base.galeria || (tieneFoto
+    ? [`assets/productos/${base.id}.webp`, ...Array.from({ length: extras }, (_, i) => `assets/productos/galeria/${base.id}-${i + 1}.webp`)]
+    : [placeholder]);
   return base;
 }
 

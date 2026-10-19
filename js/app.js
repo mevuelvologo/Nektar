@@ -9,6 +9,8 @@ const state = {
   vista: "bienvenida",      // "bienvenida" | "pedido" | "info"
   infoItemId: null,         // id del ítem mostrado en la vista "info"
   infoGaleriaIndex: 0,
+  audioId: null,            // producto cuyo audio está cargado en el reproductor
+  origenInfoId: null,       // tarjeta desde la que se abrió la info (para volver a ella)
   filtroActivo: "todo",
   busqueda: "",
   carrito: {},              // { id: cantidad }
@@ -139,7 +141,7 @@ function renderGrid() {
     const card = document.createElement("div");
     card.className = "card"
       + (cant > 0 ? " seleccionado" : "")
-      + (state.ordenClicks[0] === p.id ? " activo" : "")
+      + (state.vista === "info" && state.infoItemId === p.id ? " activo" : "")
       + (!p.disponible ? " agotado" : "");
     card.setAttribute("role", "listitem");
     card.setAttribute("data-id", p.id);
@@ -151,39 +153,42 @@ function renderGrid() {
         </div>
         <button class="card-info-btn" data-info="${p.id}" aria-label="Ver información de ${p.nombre}">i</button>
       </div>
-      ${(p.precio >= CONFIG.envioGratisMinimo || !p.disponible || p.audio) ? `
+      ${(p.precio >= CONFIG.envioGratisMinimo || !p.disponible) ? `
         <div class="card-badges">
           ${p.precio >= CONFIG.envioGratisMinimo ? `<span class="card-envio-gratis">Envío gratis</span>` : ""}
           ${!p.disponible ? `<span class="card-sin-stock">Sin stock</span>` : ""}
-          ${p.audio ? `<button class="card-audio-btn" data-audio-preview="${p.id}" aria-label="Escuchar muestra">▶ audio</button>` : ""}
         </div>
       ` : ""}
       <div class="card-imagen"><img src="${p.imagen}" alt="${p.nombre} ${p.subtitulo}" loading="lazy"></div>
       <p class="card-spec">${p.spec}</p>
       <p class="card-desc">${p.descripcionBreve}</p>
       <div class="card-footer">
-        ${p.disponible ? `
+        ${p.disponible ? (cant > 0 ? `
           <div class="card-qty">
-            ${cant > 0 ? `
-              <button class="qty-btn" data-qty-menos="${p.id}" aria-label="Quitar uno">−</button>
-              <span>${cant}</span>
-            ` : ""}
-            <button class="qty-btn" data-qty-mas="${p.id}" aria-label="Agregar">+</button>
+            <button class="qty-btn" data-qty-menos="${p.id}" aria-label="Quitar uno">−</button>
+            <span>${cant}</span>
+            <button class="qty-btn" data-qty-mas="${p.id}" aria-label="Sumar uno">+</button>
           </div>
-        ` : ""}
+        ` : `
+          <button class="btn-agregar" data-agregar="${p.id}">Agregar al carrito</button>
+        `) : ""}
         <span class="card-precio">${formatearPrecio(p.precio)}</span>
       </div>
     `;
 
+    // click en la tarjeta: solo muestra la info, nunca agrega al carrito
     card.addEventListener("click", (e) => {
-      if (!p.disponible) return;
-      if (e.target.closest("[data-info], [data-qty-mas], [data-qty-menos], [data-audio-preview]")) return;
-      toggleSeleccion(p.id);
+      if (e.target.closest("[data-info], [data-qty-mas], [data-qty-menos], [data-agregar]")) return;
+      abrirInfo(p.id);
     });
 
     el.grid.appendChild(card);
   });
 
+  el.grid.querySelectorAll("[data-agregar]").forEach(b => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    agregarYAbrirCarrito(b.getAttribute("data-agregar"));
+  }));
   el.grid.querySelectorAll("[data-qty-mas]").forEach(b => b.addEventListener("click", (e) => {
     e.stopPropagation();
     sumarUno(b.getAttribute("data-qty-mas"));
@@ -196,10 +201,6 @@ function renderGrid() {
     e.stopPropagation();
     abrirInfo(b.getAttribute("data-info"));
   }));
-  el.grid.querySelectorAll("[data-audio-preview]").forEach(b => b.addEventListener("click", (e) => {
-    e.stopPropagation();
-    reproducirAudio(getProducto(b.getAttribute("data-audio-preview")));
-  }));
 }
 
 /* ---------------- acciones de carrito ---------------- */
@@ -209,25 +210,36 @@ function registrarClick(id) {
   state.ordenClicks.unshift(id);
 }
 
-// click en el cuerpo de la tarjeta: selecciona (cantidad 1 + abre info) o
-// deselecciona (saca del pedido) si ya estaba seleccionada. Para sumar un
-// segundo (o restar) hay que usar específicamente los botones + / -.
-function toggleSeleccion(id) {
-  const yaSeleccionado = !!state.carrito[id];
-  if (yaSeleccionado) {
-    quitarDelPedido(id);
-  } else {
-    state.carrito[id] = 1;
-    registrarClick(id);
-    state.mensajeEditado = null;
-    state.infoItemId = id;
-    state.infoGaleriaIndex = 0;
-    state.vista = "info";
-    render();
-  }
+// sube suavemente hasta la zona interactiva (arriba del todo)
+function irAZonaInteractiva() {
+  if (!el.interactive.scrollIntoView) return;
+  const reducir = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.interactive.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "start" });
 }
 
-// + / - : solo ajustan cantidad, no cambian de vista
+// vuelve a mostrar la tarjeta donde estaba la persona, para que no pierda su lugar en la grilla
+function volverALaTarjeta(id) {
+  const card = id && el.grid.querySelector(`[data-id="${id}"]`);
+  if (!card || !card.scrollIntoView) return;
+  const reducir = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  card.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "center" });
+}
+
+// botón verde "Agregar al carrito" (tarjeta o info): suma una unidad y abre el carrito
+function agregarYAbrirCarrito(id) {
+  const p = getProducto(id);
+  if (!p || !p.disponible) return;
+  state.carrito[id] = (state.carrito[id] || 0) + 1;
+  registrarClick(id);
+  state.mensajeEditado = null;
+  state.infoItemId = null;
+  state.vista = "pedido";
+  el.audioPlayer.pause();
+  render();
+  irAZonaInteractiva();
+}
+
+// + / − : solo ajustan la cantidad de lo que ya está en el pedido, no cambian de vista
 function sumarUno(id) {
   state.carrito[id] = (state.carrito[id] || 0) + 1;
   registrarClick(id);
@@ -240,64 +252,71 @@ function restarUno(id) {
   state.carrito[id] -= 1;
   if (state.carrito[id] <= 0) {
     delete state.carrito[id];
-    if (state.infoItemId === id) irAUltimoSeleccionadoOBienvenida();
+    state.ordenClicks = state.ordenClicks.filter(x => x !== id);
   }
   state.mensajeEditado = null;
-  render();
-}
-
-// saca un ítem por completo del pedido (click de deselección en la tarjeta)
-function quitarDelPedido(id) {
-  delete state.carrito[id];
-  state.ordenClicks = state.ordenClicks.filter(x => x !== id);
-  state.mensajeEditado = null;
-  if (state.infoItemId === id) {
-    irAUltimoSeleccionadoOBienvenida();
-  } else {
-    render();
-  }
-}
-
-// después de deseleccionar el ítem que se estaba viendo: mostrar el último
-// seleccionado que siga en el pedido, o volver a bienvenida si no queda ninguno
-function irAUltimoSeleccionadoOBienvenida() {
-  const siguiente = state.ordenClicks.find(x => state.carrito[x]);
-  if (siguiente) {
-    state.infoItemId = siguiente;
-    state.infoGaleriaIndex = 0;
-    state.vista = "info";
-  } else {
-    state.infoItemId = null;
-    state.vista = "bienvenida";
-  }
   render();
 }
 
 /* ---------------- vista: info ---------------- */
 
+// click en la tarjeta o en la "i": sube y muestra la info, sin tocar el pedido
 function abrirInfo(id) {
   state.infoItemId = id;
+  state.origenInfoId = id;
   state.infoGaleriaIndex = 0;
   state.vista = "info";
   render();
+  irAZonaInteractiva();
 }
 
 function cerrarInfo() {
+  const origen = state.origenInfoId;
   state.infoItemId = null;
   state.vista = "bienvenida";
   el.audioPlayer.pause();
   render();
+  volverALaTarjeta(origen);
 }
 
 function reproducirAudio(producto) {
   if (!producto || !producto.audio) return;
-  if (el.audioPlayer.src.endsWith(producto.audio) && !el.audioPlayer.paused) {
-    el.audioPlayer.pause();
-  } else {
+  const mismo = state.audioId === producto.id;
+  if (mismo && !el.audioPlayer.paused) { el.audioPlayer.pause(); return; }
+  if (!mismo) {
     el.audioPlayer.src = producto.audio;
-    el.audioPlayer.play().catch(() => {});
+    state.audioId = producto.id;
+  }
+  el.audioPlayer.play().catch(() => {});
+}
+
+// frena el audio y lo deja listo para arrancar de cero la próxima vez
+function detenerAudio() {
+  if (state.audioId === null && el.audioPlayer.paused) return;
+  el.audioPlayer.pause();
+  state.audioId = null;
+}
+
+// refleja en el botón de la info si está sonando, y el avance
+function actualizarAudioUI() {
+  const delProducto = state.audioId !== null && state.audioId === state.infoItemId;
+  const sonando = delProducto && !el.audioPlayer.paused;
+  const btn = document.getElementById("info-audio-btn");
+  if (btn) {
+    btn.textContent = sonando ? "❚❚" : "▶";
+    btn.setAttribute("aria-label", sonando ? "Pausar audio" : "Reproducir audio");
+  }
+  const texto = document.getElementById("info-audio-texto");
+  if (texto) texto.textContent = sonando ? "Pausar" : "Escuchar";
+  const barra = document.getElementById("info-audio-progreso");
+  if (barra) {
+    const d = el.audioPlayer.duration;
+    barra.style.width = (delProducto && d) ? Math.min(100, el.audioPlayer.currentTime / d * 100) + "%" : "0%";
   }
 }
+
+["play", "pause", "timeupdate", "loadedmetadata"].forEach(ev => el.audioPlayer.addEventListener(ev, actualizarAudioUI));
+el.audioPlayer.addEventListener("ended", () => { state.audioId = null; actualizarAudioUI(); });
 
 /* ---------------- armado del mensaje de WhatsApp ---------------- */
 
@@ -335,6 +354,8 @@ function render() {
   renderHeader();
   renderGrid();
 
+  if (!(state.vista === "info" && state.infoItemId)) detenerAudio();
+
   if (state.vista === "info" && state.infoItemId) {
     renderInfo();
   } else if (state.vista === "pedido") {
@@ -349,7 +370,7 @@ function renderBienvenida() {
     <div class="interactive-inner bienvenida">
       <div>
         <h1>Bienvenido a Nektar Bambú, la tienda de instrumentos musicales, luminarias y artesanías</h1>
-        <p>Para ampliar información sobre instrumentos, luminarias o artesanías hacé click sobre el ítem. Podés seleccionar varios y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
+        <p>Para ampliar información sobre instrumentos, luminarias o artesanías hacé click sobre el ítem. Podés agregar varios al carrito y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>
           <input type="search" id="buscador" placeholder="¿Qué estás buscando?" value="${state.busqueda}">
@@ -363,7 +384,6 @@ function renderBienvenida() {
     state.busqueda = e.target.value;
     renderGrid();
   });
-  input.focus();
 }
 
 function renderPedido() {
@@ -470,6 +490,7 @@ function parrafos(texto) {
 function renderInfo() {
   const p = getProducto(state.infoItemId);
   if (!p) { cerrarInfo(); return; }
+  if (state.audioId !== null && state.audioId !== p.id) detenerAudio();
 
   el.interactive.innerHTML = `
     <div class="interactive-inner info-detalle">
@@ -485,18 +506,31 @@ function renderInfo() {
       <div class="info-contenido">
         <h2>${p.nombre}${p.subtitulo ? " · " + p.subtitulo : ""}</h2>
         <p class="info-spec">${p.spec}</p>
+        <p class="info-precio">${formatearPrecio(p.precio)}</p>
+        ${p.disponible ? `
+          <button class="btn-agregar btn-agregar-grande" id="btn-agregar-info">Agregar al carrito</button>
+          ${(state.carrito[p.id] || 0) > 0 ? `<p class="info-en-pedido">Ya tenés ${state.carrito[p.id]} en tu pedido</p>` : ""}
+        ` : `<p class="info-sin-stock">Sin stock por el momento</p>`}
         ${parrafos(p.descripcionLarga)}
         ${p.audio ? `
           <div class="info-audio">
             <button id="info-audio-btn" aria-label="Reproducir audio">▶</button>
-            <span>Escuchar</span>
-          </div>` : `<p style="font-style:italic;opacity:.6;font-size:.85rem;">(audio a cargar próximamente)</p>`}
+            <span id="info-audio-texto">Escuchar</span>
+            <div class="info-audio-barra"><span id="info-audio-progreso"></span></div>
+          </div>` : ""}
         <button class="info-cerrar" id="btn-cerrar-info">Volver</button>
       </div>
     </div>
   `;
 
+  // precarga la foto siguiente del carrusel para que el cambio no parpadee
+  if (p.galeria.length > 1) {
+    new Image().src = p.galeria[(state.infoGaleriaIndex + 1) % p.galeria.length];
+  }
+
   document.getElementById("btn-cerrar-info").addEventListener("click", cerrarInfo);
+  const btnAgregar = document.getElementById("btn-agregar-info");
+  if (btnAgregar) btnAgregar.addEventListener("click", () => agregarYAbrirCarrito(p.id));
 
   const prev = el.interactive.querySelector(".info-galeria-nav.prev");
   const next = el.interactive.querySelector(".info-galeria-nav.next");
@@ -511,6 +545,7 @@ function renderInfo() {
 
   const audioBtn = document.getElementById("info-audio-btn");
   if (audioBtn) audioBtn.addEventListener("click", () => reproducirAudio(p));
+  actualizarAudioUI();
 }
 
 /* ---------------- texto informativo (módulo 4) y footer ---------------- */
@@ -541,6 +576,7 @@ document.querySelector('[data-action="open-pedido"]').addEventListener("click", 
   state.vista = "pedido";
   state.infoItemId = null;
   render();
+  irAZonaInteractiva();
 });
 
 /* ---------------- init ---------------- */

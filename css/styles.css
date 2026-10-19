@@ -26,6 +26,7 @@
   --verde-medio: #6b8f4e;
   --verde-claro: #c7d96a;
   --acento: #d9691f;
+  --verde-wa: #1E8449;   /* verde estilo WhatsApp con contraste suficiente para letra blanca (4.7:1) */
 
   --font: "Montserrat", sans-serif;
 
@@ -103,6 +104,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---------- 2. MÓDULO INTERACTIVO ---------- */
 .interactive {
+  scroll-margin-top: 72px;
   padding: clamp(20px, 4vw, 40px) clamp(16px, 4vw, 48px);
   background: var(--modulo);
   border-bottom: 1px solid var(--borde);
@@ -318,7 +320,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 16px;
 }
 
@@ -336,7 +338,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .card.seleccionado { border-color: var(--verde-claro); }
 .card.activo { border-color: var(--verde-oscuro); }
-.card.agotado { cursor: default; opacity: 0.55; filter: grayscale(0.6); }
+.card.agotado { opacity: 0.55; filter: grayscale(0.6); }
 .card.agotado:hover { transform: none; }
 
 .card-badges {
@@ -430,3 +432,36 @@ button { font-family: inherit; cursor: pointer; }
 .footer-links { display: flex; gap: 14px; }
 .footer-links a { display: flex; color: var(--verde-oscuro); }
 .footer-links a:hover { color: var(--acento); }
+
+/* ---------- BOTÓN "AGREGAR AL CARRITO" (verde estilo WhatsApp) ---------- */
+.btn-agregar {
+  display: block;
+  width: 100%;
+  background: var(--verde-wa);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  text-align: center;
+  padding: 10px 10px;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.btn-agregar:hover { filter: brightness(1.1); }
+.btn-agregar:active { transform: scale(0.98); }
+.btn-agregar-grande { width: auto; font-size: 1rem; padding: 13px 32px; margin: 4px 0; }
+
+.info-precio { font-weight: 800; font-size: 1.6rem; margin: 4px 0 10px; }
+.info-en-pedido { font-size: 0.85rem; font-style: italic; color: var(--verde-oscuro); margin: 8px 0 18px; }
+.info-sin-stock {
+  display: inline-block;
+  font-weight: 700; font-size: 0.85rem; color: var(--fondo);
+  background: color-mix(in srgb, var(--tinta) 70%, transparent);
+  padding: 6px 16px; border-radius: 999px; margin: 4px 0 16px;
+}
+
+/* barra de avance del audio en la ficha */
+.info-audio-barra { width: 90px; height: 4px; background: var(--borde); border-radius: 2px; overflow: hidden; }
+.info-audio-barra span { display: block; height: 100%; width: 0; background: var(--verde-oscuro); }
+.info-audio { margin: 4px 0 16px; }
