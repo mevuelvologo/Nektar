@@ -16,7 +16,7 @@ const state = {
   carrito: {},              // { id: cantidad }
   ordenClicks: [],          // ids en orden de click más reciente primero
   envio: "retira",          // "gratis" | "encomienda" | "retira"
-  pago: "efectivo",         // "efectivo" | "tarjeta"
+  pago: "bna",              // "bna" | "mercadopago" | "efectivo" | "tarjeta"
   mensajeEditado: null      // si el usuario edita el chat a mano, se respeta
 };
 
@@ -36,6 +36,15 @@ const el = {
 function formatearPrecio(numero) {
   if (numero === null || numero === undefined) return "Consultar precio";
   return ".-$ " + numero.toLocaleString("es-AR");
+}
+
+// "Envíos gratis superando los $X": el monto tiene que ser MAYOR al mínimo
+function superaEnvioGratis(monto) {
+  return monto > CONFIG.envioGratisMinimo;
+}
+
+function montoCorto(n) {
+  return "$" + n.toLocaleString("es-AR");
 }
 
 function precioLinea(p, cant) {
@@ -94,7 +103,7 @@ function productosFiltrados() {
   let lista = PRODUCTOS.slice();
 
   if (state.filtroActivo === "envio-gratis") {
-    lista = lista.filter(p => p.precio >= CONFIG.envioGratisMinimo);
+    lista = lista.filter(p => superaEnvioGratis(p.precio));
   } else if (state.filtroActivo !== "todo") {
     lista = lista.filter(p => p.categoria === state.filtroActivo);
   }
@@ -141,8 +150,7 @@ function renderGrid() {
     const card = document.createElement("div");
     card.className = "card"
       + (cant > 0 ? " seleccionado" : "")
-      + (state.vista === "info" && state.infoItemId === p.id ? " activo" : "")
-      + (!p.disponible ? " agotado" : "");
+      + (state.vista === "info" && state.infoItemId === p.id ? " activo" : "");
     card.setAttribute("role", "listitem");
     card.setAttribute("data-id", p.id);
 
@@ -153,10 +161,9 @@ function renderGrid() {
         </div>
         <button class="card-info-btn" data-info="${p.id}" aria-label="Ver información de ${p.nombre}">i</button>
       </div>
-      ${(p.precio >= CONFIG.envioGratisMinimo || !p.disponible) ? `
+      ${superaEnvioGratis(p.precio) ? `
         <div class="card-badges">
-          ${p.precio >= CONFIG.envioGratisMinimo ? `<span class="card-envio-gratis">Envío gratis</span>` : ""}
-          ${!p.disponible ? `<span class="card-sin-stock">Sin stock</span>` : ""}
+          <span class="card-envio-gratis">Envío gratis</span>
         </div>
       ` : ""}
       <div class="card-imagen"><img src="${p.imagen}" alt="${p.nombre} ${p.subtitulo}" loading="lazy"></div>
@@ -171,7 +178,9 @@ function renderGrid() {
           </div>
         ` : `
           <button class="btn-agregar" data-agregar="${p.id}">Agregar al carrito</button>
-        `) : ""}
+        `) : `
+          <span class="card-sin-stock">SIN STOCK</span>
+        `}
         <span class="card-precio">${formatearPrecio(p.precio)}</span>
       </div>
     `;
@@ -327,7 +336,10 @@ function textoEnvio() {
 }
 
 function textoPago() {
-  return state.pago === "tarjeta" ? "pago con tarjeta y cuotas" : "pago en transferencia o efectivo";
+  if (state.pago === "bna") return "pago con BNA+";
+  if (state.pago === "mercadopago") return "pago con Mercado Pago";
+  if (state.pago === "tarjeta") return "pago con tarjeta y cuotas";
+  return "pago en transferencia o efectivo";
 }
 
 function armarMensaje() {
@@ -369,8 +381,9 @@ function renderBienvenida() {
   el.interactive.innerHTML = `
     <div class="interactive-inner bienvenida">
       <div>
-        <h1>Bienvenido a Nektar Bambú, la tienda de instrumentos musicales, luminarias y artesanías</h1>
-        <p>Para ampliar información sobre instrumentos, luminarias o artesanías hacé click sobre el ítem. Podés agregar varios al carrito y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
+        <h1>Nektar Bambú, la tienda de instrumentos musicales, luminarias y artesanías.</h1>
+        <p>Para ampliar información hacé click sobre el ítem. Podés agregar varios al carrito y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
+        <p class="bienvenida-envio">Envíos Gratis superando los ${montoCorto(CONFIG.envioGratisMinimo)}</p>
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>
           <input type="search" id="buscador" placeholder="¿Qué estás buscando?" value="${state.busqueda}">
@@ -389,7 +402,9 @@ function renderBienvenida() {
 function renderPedido() {
   const items = Object.entries(state.carrito);
   const subtotal = subtotalCarrito();
-  const faltaParaGratis = CONFIG.envioGratisMinimo - subtotal;
+  const gratis = superaEnvioGratis(subtotal);
+  // si el pedido bajó del mínimo, deja de valer la opción de envío gratis
+  if (state.envio === "gratis" && !gratis) { state.envio = "retira"; state.mensajeEditado = null; }
 
   el.interactive.innerHTML = `
     <div class="interactive-inner pedido">
@@ -414,8 +429,8 @@ function renderPedido() {
         <div class="opciones-grupo">
           <p class="opciones-grupo-titulo">Opciones de envío</p>
           <label class="opcion-radio">
-            <input type="radio" name="envio" value="gratis" ${state.envio === "gratis" ? "checked" : ""} ${subtotal < CONFIG.envioGratisMinimo ? "disabled" : ""}>
-            <span class="opcion-texto">Gratis en CABA y GBA<br><small>compra mínima ${formatearPrecio(CONFIG.envioGratisMinimo)}</small></span>
+            <input type="radio" name="envio" value="gratis" ${state.envio === "gratis" ? "checked" : ""} ${gratis ? "" : "disabled"}>
+            <span class="opcion-texto">Gratis en CABA y GBA<br><small>superando los ${montoCorto(CONFIG.envioGratisMinimo)}</small></span>
           </label>
           <label class="opcion-radio">
             <input type="radio" name="envio" value="encomienda" ${state.envio === "encomienda" ? "checked" : ""}>
@@ -430,6 +445,14 @@ function renderPedido() {
         <div class="opciones-grupo">
           <p class="opciones-grupo-titulo">Opciones de pago</p>
           <label class="opcion-radio">
+            <input type="radio" name="pago" value="bna" ${state.pago === "bna" ? "checked" : ""}>
+            <span class="opcion-texto">BNA+ (recomendado)</span>
+          </label>
+          <label class="opcion-radio">
+            <input type="radio" name="pago" value="mercadopago" ${state.pago === "mercadopago" ? "checked" : ""}>
+            <span class="opcion-texto">Mercado Pago<br><small>todas las tarjetas y dinero en cuenta</small></span>
+          </label>
+          <label class="opcion-radio">
             <input type="radio" name="pago" value="efectivo" ${state.pago === "efectivo" ? "checked" : ""}>
             <span class="opcion-texto">Efectivo o transferencia</span>
           </label>
@@ -440,10 +463,10 @@ function renderPedido() {
         </div>
 
         ${items.length > 0 ? `
-          <div class="envio-gratis-aviso ${faltaParaGratis <= 0 ? "cumplido" : ""}">
-            ${faltaParaGratis <= 0
+          <div class="envio-gratis-aviso ${gratis ? "cumplido" : ""}">
+            ${gratis
               ? "Llegaste al envío gratis en CABA y GBA."
-              : `Te faltan ${formatearPrecio(faltaParaGratis)} para el envío gratis.`}
+              : `Sumá más de ${formatearPrecio(CONFIG.envioGratisMinimo - subtotal)} para el envío gratis en CABA y GBA.`}
           </div>
         ` : ""}
 
@@ -510,7 +533,7 @@ function renderInfo() {
         ${p.disponible ? `
           <button class="btn-agregar btn-agregar-grande" id="btn-agregar-info">Agregar al carrito</button>
           ${(state.carrito[p.id] || 0) > 0 ? `<p class="info-en-pedido">Ya tenés ${state.carrito[p.id]} en tu pedido</p>` : ""}
-        ` : `<p class="info-sin-stock">Sin stock por el momento</p>`}
+        ` : `<p class="info-sin-stock">SIN STOCK</p>`}
         ${parrafos(p.descripcionLarga)}
         ${p.audio ? `
           <div class="info-audio">
@@ -552,13 +575,21 @@ function renderInfo() {
 
 function renderTextoYFooter() {
   el.showroomTitle.textContent = CONFIG.showroom;
-  el.showroomBody.innerHTML = CONFIG.textoInfoPlaceholder
-    .split("\n\n")
-    .map(parrafo => `<p>${parrafo.replace(/\n/g, "<br>")}</p>`)
-    .join("");
+
+  const g = CONFIG.guia;
+  el.showroomBody.innerHTML = `
+    <h3 class="guia-titulo">${g.titulo}</h3>
+    ${g.secciones.map(sec => `
+      <section class="guia-seccion">
+        <h4>${sec.titulo}</h4>
+        <ul>${sec.items.map(t => `<li>${t}</li>`).join("")}</ul>
+      </section>
+    `).join("")}
+  `;
 
   document.getElementById("footer-whatsapp").href = `https://wa.me/${CONFIG.whatsappNumero}`;
   document.getElementById("footer-instagram").href = CONFIG.redes.instagram;
+  document.getElementById("footer-youtube").href = CONFIG.redes.youtube;
   document.getElementById("footer-maps").href = CONFIG.redes.maps;
 }
 

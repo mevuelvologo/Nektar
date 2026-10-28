@@ -338,22 +338,26 @@ button { font-family: inherit; cursor: pointer; }
 }
 .card.seleccionado { border-color: var(--verde-claro); }
 .card.activo { border-color: var(--verde-oscuro); }
-.card.agotado { opacity: 0.55; filter: grayscale(0.6); }
-.card.agotado:hover { transform: none; }
 
 .card-badges {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+  justify-content: center;
 }
 
 .card-sin-stock {
-  font-size: 0.72rem;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.78rem;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
   color: var(--fondo);
-  background: color-mix(in srgb, var(--tinta) 70%, transparent);
-  padding: 4px 12px;
+  background: color-mix(in srgb, var(--tinta) 72%, transparent);
+  padding: 10px;
   border-radius: 999px;
 }
 
@@ -465,3 +469,18 @@ button { font-family: inherit; cursor: pointer; }
 .info-audio-barra { width: 90px; height: 4px; background: var(--borde); border-radius: 2px; overflow: hidden; }
 .info-audio-barra span { display: block; height: 100%; width: 0; background: var(--verde-oscuro); }
 .info-audio { margin: 4px 0 16px; }
+
+/* texto de bienvenida: línea de envío gratis */
+.bienvenida .bienvenida-envio { font-weight: 700; font-style: normal; color: var(--verde-oscuro); }
+
+/* guía rápida de compra (pie de la página) */
+.guia-titulo { font-weight: 800; font-size: 1rem; letter-spacing: 0.03em; margin: 0 0 6px; font-style: normal; }
+.guia-seccion h4 { font-weight: 700; font-size: 0.92rem; letter-spacing: 0.02em; margin: 22px 0 6px; }
+.guia-seccion ul { margin: 0; padding-left: 20px; }
+.guia-seccion li {
+  font-style: italic;
+  color: color-mix(in srgb, var(--tinta) 70%, transparent);
+  font-size: 0.9rem;
+  margin: 3px 0;
+}
+.guia-seccion a { color: var(--verde-oscuro); font-weight: 600; text-decoration: underline; }

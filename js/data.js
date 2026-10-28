@@ -53,7 +53,7 @@ const GALERIA_EXTRA = {"baquetas-chicas": 3, "baquetas-grandes": 3, "bongo-bambu
 
 // audio corto de cada producto (id -> archivo en assets/audio/). Las variantes que comparten
 // el mismo sonido (chico/mediano/grande) apuntan al mismo archivo.
-const AUDIO_DE = {"bongo-bambu-2-tonos": "assets/audio/bongo-bambu-2-tonos.m4a", "bongo-bambu-3-tonos": "assets/audio/bongo-bambu-3-tonos.m4a", "bongo-bambu-lineas": "assets/audio/bongo-bambu-lineas.m4a", "cascabelero": "assets/audio/cascabelero.m4a", "caxixi": "assets/audio/caxixi.m4a", "didgeridoo-liso": "assets/audio/didgeridoo-liso.m4a", "didgeridoo-pirograbado": "assets/audio/didgeridoo-pirograbado.m4a", "didgeridoo-tallado": "assets/audio/didgeridoo-pirograbado.m4a", "doble-percu": "assets/audio/doble-percu.m4a", "ektar": "assets/audio/ektar.m4a", "flautone": "assets/audio/flautone.m4a", "guiro-chico": "assets/audio/guiro-mediano.m4a", "guiro-grande": "assets/audio/guiro-mediano.m4a", "guiro-mediano": "assets/audio/guiro-mediano.m4a", "llamador-angeles": "assets/audio/llamador-angeles.m4a", "llamador-angeles-chico": "assets/audio/llamador-angeles.m4a", "pucuy": "assets/audio/pucuy.m4a", "shaker": "assets/audio/shaker.m4a", "tambor-oceanico-chico": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-oceanico-grande": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-oceanico-mediano": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-trueno-chico": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-grande": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-mediano": "assets/audio/tambor-trueno-mediano.m4a"};
+const AUDIO_DE = {"bongo-bambu-2-tonos": "assets/audio/bongo-bambu-2-tonos.m4a", "bongo-bambu-3-tonos": "assets/audio/bongo-bambu-3-tonos.m4a", "bongo-bambu-lineas": "assets/audio/bongo-bambu-lineas.m4a", "cascabelero": "assets/audio/cascabelero.m4a", "caxixi": "assets/audio/caxixi.m4a", "didgeridoo-liso": "assets/audio/didgeridoo-liso.m4a", "didgeridoo-pirograbado": "assets/audio/didgeridoo-pirograbado.m4a", "didgeridoo-tallado": "assets/audio/didgeridoo-pirograbado.m4a", "doble-percu": "assets/audio/doble-percu.m4a", "ektar": "assets/audio/ektar.m4a", "flautone": "assets/audio/flautone.m4a", "fungiball": "assets/audio/fungiball.m4a", "guiro-chico": "assets/audio/guiro-mediano.m4a", "guiro-grande": "assets/audio/guiro-mediano.m4a", "guiro-mediano": "assets/audio/guiro-mediano.m4a", "kass-kash-asalato": "assets/audio/kass-kash-asalato.m4a", "llamador-angeles": "assets/audio/llamador-angeles.m4a", "llamador-angeles-chico": "assets/audio/llamador-angeles.m4a", "matofono": "assets/audio/matofono.m4a", "ovni-drum-chico": "assets/audio/ovni-drum-chico.m4a", "ovni-drum-clasico": "assets/audio/ovni-drum-clasico.m4a", "ovni-drum-grande": "assets/audio/ovni-drum-grande.m4a", "ovni-drum-mini": "assets/audio/ovni-drum-mini.m4a", "pajarito": "assets/audio/pajarito.m4a", "palo-lluvia": "assets/audio/palo-lluvia.m4a", "palo-lluvia-grande": "assets/audio/palo-lluvia.m4a", "pucuy": "assets/audio/pucuy.m4a", "shaker": "assets/audio/shaker.m4a", "tambor-oceanico-chico": "assets/audio/tambor-oceanico-chico.m4a", "tambor-oceanico-grande": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-oceanico-mediano": "assets/audio/tambor-oceanico-mediano.m4a", "tambor-trueno-chico": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-grande": "assets/audio/tambor-trueno-mediano.m4a", "tambor-trueno-mediano": "assets/audio/tambor-trueno-mediano.m4a"};
 
 function item(o) {
   const base = Object.assign({
@@ -511,7 +511,6 @@ No hace falta curarlo: se lava y ya se puede usar. Incluye bombilla de bambú. S
 Diseñado y fabricado por Nektar Bambú, es un shaker de percusión menor inspirado en la silueta del hongo amanita. Su formato ergonómico cabe perfectamente en la palma de la mano, ideal para marcar compases precisos y patrones sincopados.
 
 Material: polímero plástico rígido y resistente a impactos. Tamaño chico, de bolsillo.`,
-    disponible: false,
   }),
 
   item({
@@ -524,7 +523,6 @@ Material: polímero plástico rígido y resistente a impactos. Tamaño chico, de
 Construido con un mango firme de madera que sostiene una semiesfera de calabaza natural pintada a mano, emulando la silueta de un hongo. Contiene múltiples cascabeles metálicos que liberan un sonido brillante y continuo con cada sacudida.
 
 Ideal para marcar el compás en ensambles acústicos, círculos de percusión, danzas o musicoterapia.`,
-    disponible: false,
   }),
 
   item({
@@ -589,7 +587,6 @@ Se entrega completamente armada con circuito eléctrico y lámpara incluida, pud
 Combina juego, estímulo sonoro y diseño rústico. Su gran atractivo está en la modulación: al agregar unas gotas de agua por el orificio superior y soplar, reproduce un trino vibrante y realista que imita el canto de los pájaros. También se puede tocar en seco como silbato tradicional.
 
 Ideal para estimulación temprana en niños y para músicos y terapeutas que buscan efectos ambientales orgánicos. Medidas: 5 x 6 cm.`,
-    disponible: false,
   }),
 
   item({
@@ -623,8 +620,8 @@ Su diseño liviano reacciona ante la más mínima corriente de aire. Apto para e
 
 // Configuración general del sitio — editable sin tocar la lógica
 const CONFIG = {
-  envioGratisMinimo: 120000,
-  whatsappNumero: "5491165865434", // sin espacios ni signos, con código de país
+  envioGratisMinimo: 150000,   // el envío gratis aplica "superando" este monto, en CABA y GBA
+  whatsappNumero: "5491165865434", // sin espacios ni signos, con código de país (a este número llegan los pedidos)
   categorias: [
     { id: "todo", nombre: "Todo" },
     { id: "instrumentos", nombre: "Instrumentos" },
@@ -632,14 +629,47 @@ const CONFIG = {
     { id: "luminarias", nombre: "Luminarias" },
     { id: "envio-gratis", nombre: "Envío Gratis" }
   ],
-  textoInfoPlaceholder: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
-
-Lorem ipsum
-
-Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.`,
   showroom: "Showroom Floresta, de Lunes a Sábados 14 a 21 hs",
   redes: {
     instagram: "https://instagram.com/nektarbambu",
-    maps: "https://maps.google.com/?q=nektarbambu"
+    youtube: "https://www.youtube.com/@nektarbambu",
+    maps: "https://www.google.com/maps/search/?api=1&query=Av.+Rivadavia+8803%2C+Floresta%2C+CABA"
+  },
+  // Texto del pie de la página. Cada ítem admite HTML simple (links) porque lo edita el dueño del sitio.
+  guia: {
+    titulo: "NEKTAR BAMBÚ • GUÍA RÁPIDA DE COMPRA",
+    secciones: [
+      {
+        titulo: "1. ¿CÓMO COMPRAR?",
+        items: [
+          "Sumá tus artículos al carrito en la web.",
+          "Al finalizar, el pedido nos llega directo por WhatsApp.",
+          "Coordinamos detalles, pago y envío con atención personalizada."
+        ]
+      },
+      {
+        titulo: "2. FORMAS DE PAGO",
+        items: [
+          "BNA+ (recomendado)",
+          "Mercado Pago (todas las tarjetas y dinero en cuenta).",
+          "Transferencia Bancaria."
+        ]
+      },
+      {
+        titulo: "3. ENVÍOS Y ENTREGAS",
+        items: [
+          "CABA y primeros cordones del GBA: envíos en el día por moto mensajería.",
+          "Todo el país: Correo Argentino, Mercado Envíos y encomiendas (con embalaje reforzado)."
+        ]
+      },
+      {
+        titulo: "4. SHOWROOM Y CONTACTO",
+        items: [
+          "Showroom y Retiro: <a href=\"https://www.google.com/maps/search/?api=1&query=Av.+Rivadavia+8803%2C+Floresta%2C+CABA\" target=\"_blank\" rel=\"noopener\">Av. Rivadavia 8803, Floresta, CABA</a> (con cita previa).",
+          "WhatsApp: <a href=\"https://wa.me/5491165865434\" target=\"_blank\" rel=\"noopener\">+54 9 11 6586-5434</a> / <a href=\"https://wa.me/5491123152312\" target=\"_blank\" rel=\"noopener\">+54 9 11 2315-2312</a>",
+          "Email: <a href=\"mailto:nektarbambu@gmail.com\">nektarbambu@gmail.com</a>"
+        ]
+      }
+    ]
   }
 };
