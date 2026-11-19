@@ -9,6 +9,7 @@ const state = {
   vista: "bienvenida",      // "bienvenida" | "pedido" | "info"
   infoItemId: null,         // id del ítem mostrado en la vista "info"
   infoGaleriaIndex: 0,
+  masInfo: false,           // en el celular: si el texto de bienvenida está desplegado
   audioId: null,            // producto cuyo audio está cargado en el reproductor
   origenInfoId: null,       // tarjeta desde la que se abrió la info (para volver a ella)
   filtroActivo: "todo",
@@ -379,15 +380,14 @@ function render() {
 
 function renderBienvenida() {
   el.interactive.innerHTML = `
-    <div class="interactive-inner bienvenida">
-      <div>
-        <h1>Nektar Bambú, la tienda de instrumentos musicales, luminarias y artesanías.</h1>
-        <p>Para ampliar información hacé click sobre el ítem. Podés agregar varios al carrito y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
-        <p class="bienvenida-envio">Envíos Gratis superando los ${montoCorto(CONFIG.envioGratisMinimo)}</p>
-        <div class="search-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>
-          <input type="search" id="buscador" placeholder="¿Qué estás buscando?" value="${state.busqueda}">
-        </div>
+    <div class="interactive-inner bienvenida${state.masInfo ? " expandido" : ""}">
+      <h1>Nektar Bambú, la tienda de instrumentos musicales, luminarias y artesanías.</h1>
+      <p class="bienvenida-detalle" id="bienvenida-detalle">Para ampliar información hacé click sobre el ítem. Podés agregar varios al carrito y modificar cantidades para hacer tu pedido por WhatsApp directo con nosotros.</p>
+      <p class="bienvenida-envio">Envíos Gratis superando los ${montoCorto(CONFIG.envioGratisMinimo)}</p>
+      <button type="button" class="bienvenida-mas" id="btn-mas-info" aria-expanded="${state.masInfo}" aria-controls="bienvenida-detalle">${state.masInfo ? "menos información" : "más información"}</button>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>
+        <input type="search" id="buscador" placeholder="¿Qué estás buscando?" value="${state.busqueda}">
       </div>
       <div class="bienvenida-badge"><img src="assets/logo/badge.svg" alt="Isotipo Nektar Bambú"></div>
     </div>
@@ -396,6 +396,15 @@ function renderBienvenida() {
   input.addEventListener("input", (e) => {
     state.busqueda = e.target.value;
     renderGrid();
+  });
+
+  // en el celular el texto largo queda recortado: "más información" lo despliega
+  const mas = document.getElementById("btn-mas-info");
+  mas.addEventListener("click", () => {
+    state.masInfo = !state.masInfo;
+    el.interactive.querySelector(".bienvenida").classList.toggle("expandido", state.masInfo);
+    mas.textContent = state.masInfo ? "menos información" : "más información";
+    mas.setAttribute("aria-expanded", String(state.masInfo));
   });
 }
 
@@ -517,7 +526,7 @@ function renderInfo() {
 
   el.interactive.innerHTML = `
     <div class="interactive-inner info-detalle">
-      <div class="info-galeria">
+      <div class="info-galeria${p.galeria.length > 1 ? " con-puntos" : ""}">
         ${p.galeria.length > 1 ? `<button class="info-galeria-nav prev" aria-label="Anterior">‹</button>` : ""}
         <img src="${p.galeria[state.infoGaleriaIndex]}" alt="${p.nombre} ${p.subtitulo}">
         ${p.galeria.length > 1 ? `<button class="info-galeria-nav next" aria-label="Siguiente">›</button>` : ""}

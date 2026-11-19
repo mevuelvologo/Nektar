@@ -206,14 +206,16 @@ Largo aproximado: 25 cm. Terminaciones disponibles: flameado, pirograbado o tall
 
   item({
     id: "kass-kash-asalato", categoria: "instrumentos", orden: 11,
-    nombre: "Kass Kash (Asalato)", subtitulo: "",
+    nombre: "Kass Kass (Asalato)", subtitulo: "",
     precio: 60000, spec: "Percusión · Africano",
     descripcionBreve: "Idiófono africano de dos esferas: percusión y malabarismo rítmico.",
-    descripcionLarga: `Kass Kash / Asalato – percusión y malabarismo rítmico. Ritmo, destreza y coordinación en tus manos.
+    descripcionLarga: `Kass Kass / Asalato – percusión y malabarismo rítmico. Ritmo, destreza y coordinación en tus manos.
 
 Originario de África Occidental, este instrumento idiófono combina la percusión con la motricidad fina. Está compuesto por dos esferas unidas por una cuerda ajustable: una se sostiene en la palma mientras la otra pivota libremente, permitiendo alternar el sonido de shaker con el chasquido del impacto entre ambas esferas.
 
-Desde patrones rítmicos sencillos hasta complejas combinaciones de malabarismo sonoro con un par en cada mano, ofrece un aprendizaje dinámico y muy versátil.`,
+Desde patrones rítmicos sencillos hasta complejas combinaciones de malabarismo sonoro con un par en cada mano, ofrece un aprendizaje dinámico y muy versátil.
+
+También conocido como Asalato o Kashaka.`,
   }),
 
   item({

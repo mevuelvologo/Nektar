@@ -67,9 +67,11 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .logo { display: flex; align-items: center; text-decoration: none; }
-.logo-img { height: clamp(22px, 3.2vw, 30px); width: auto; display: block; }
+.logo-img { height: clamp(18px, 3.2vw, 30px); width: auto; display: block; }
 
 .cart-pill {
+  white-space: nowrap;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -115,12 +117,18 @@ button { font-family: inherit; cursor: pointer; }
 .bienvenida {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: clamp(24px, 5vw, 56px);
-  align-items: center;
+  grid-template-areas:
+    "titulo badge"
+    "detalle badge"
+    "envio badge"
+    "buscar badge";
+  column-gap: clamp(24px, 5vw, 56px);
+  align-content: center;
+  align-items: start;
 }
-@media (max-width: 760px) { .bienvenida { grid-template-columns: 1fr; } }
 
 .bienvenida h1 {
+  grid-area: titulo;
   font-weight: 500;
   font-style: italic;
   font-size: clamp(1.3rem, 2.8vw, 1.9rem);
@@ -133,6 +141,40 @@ button { font-family: inherit; cursor: pointer; }
   max-width: 58ch;
   color: color-mix(in srgb, var(--tinta) 78%, transparent);
   margin: 0 0 22px;
+}
+.bienvenida .bienvenida-detalle { grid-area: detalle; }
+.bienvenida .bienvenida-envio { grid-area: envio; }
+.bienvenida .search-box { grid-area: buscar; }
+/* "más información" solo se usa en el celular */
+.bienvenida .bienvenida-mas { display: none; grid-area: mas; }
+
+/* celular: ícono a la izquierda del título, texto recortado y buscador debajo */
+@media (max-width: 760px) {
+  .bienvenida {
+    grid-template-columns: clamp(76px, 22vw, 100px) 1fr;
+    grid-template-areas:
+      "badge titulo"
+      "badge envio"
+      "badge mas"
+      "detalle detalle"
+      "buscar buscar";
+    column-gap: 16px;
+    align-content: start;
+  }
+  .bienvenida h1 { font-size: 1.1rem; line-height: 1.3; margin: 0 0 8px; max-width: none; }
+  .bienvenida .bienvenida-envio { margin: 0 0 6px; font-size: 0.95rem; max-width: none; }
+  .bienvenida .bienvenida-mas {
+    display: inline-block;
+    justify-self: start;
+    background: none; border: none; padding: 0;
+    font-family: inherit; font-size: 0.88rem; font-weight: 600;
+    color: var(--verde-oscuro);
+    text-decoration: underline;
+  }
+  .bienvenida .bienvenida-detalle { display: none; margin: 12px 0 0; max-width: none; }
+  .bienvenida.expandido .bienvenida-detalle { display: block; }
+  .bienvenida .search-box { margin-top: 14px; max-width: none; }
+  .bienvenida .bienvenida-badge { align-self: center; }
 }
 
 .search-box {
@@ -154,12 +196,15 @@ button { font-family: inherit; cursor: pointer; }
 .search-box input::placeholder { color: color-mix(in srgb, var(--tinta) 45%, transparent); }
 
 .bienvenida-badge {
+  grid-area: badge;
+  align-self: center;
   width: clamp(120px, 18vw, 190px);
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+@media (max-width: 760px) { .bienvenida-badge { width: 100%; margin: 0; } }
 .bienvenida-badge img { width: 100%; height: auto; display: block; }
 
 /* -- pedido (panel + chat) -- */
@@ -258,7 +303,7 @@ button { font-family: inherit; cursor: pointer; }
   position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
   display: flex; gap: 6px;
 }
-.info-galeria-dots span { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--tinta) 25%, transparent); }
+.info-galeria-dots span { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--tinta) 30%, transparent); }
 .info-galeria-dots span.activo { background: var(--tinta); }
 .info-galeria-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -323,6 +368,8 @@ button { font-family: inherit; cursor: pointer; }
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 16px;
 }
+/* celular: dos tarjetas por fila */
+@media (max-width: 760px) { .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
 
 .card {
   background: var(--tarjeta);
@@ -454,7 +501,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn-agregar:hover { filter: brightness(1.1); }
 .btn-agregar:active { transform: scale(0.98); }
-.btn-agregar-grande { width: auto; font-size: 1rem; padding: 13px 32px; margin: 4px 0; }
+.btn-agregar-grande { width: auto; font-size: 1rem; padding: 13px 32px; margin: 4px 0 16px; }
 
 .info-precio { font-weight: 800; font-size: 1.6rem; margin: 4px 0 10px; }
 .info-en-pedido { font-size: 0.85rem; font-style: italic; color: var(--verde-oscuro); margin: 8px 0 18px; }
@@ -484,3 +531,6 @@ button { font-family: inherit; cursor: pointer; }
   margin: 3px 0;
 }
 .guia-seccion a { color: var(--verde-oscuro); font-weight: 600; text-decoration: underline; }
+
+/* los puntitos del carrusel quedan debajo de la foto, sin tapar el producto */
+.info-galeria.con-puntos { padding-bottom: 26px; }
